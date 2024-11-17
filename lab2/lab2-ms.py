@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.linalg import solve_banded
+from scipy import linalg
 
 
 # Variables
@@ -26,13 +28,27 @@ norm_const = (np.sqrt(2*np.pi)**(1/2) * sigma) # Normalization Constant for ease
 psi_0 = 1 / ( norm_const * np.exp**((-(x - x_0)**2) / (4*sigma**2)) * np.exp**(i * k_0 *(x - x_0)))
 
 # Potential
-V = 0
-if np.abs(x) <= a/2: # If |a| <= a/2, V = V_0, otherwise V = 0
-    V = V_0
 
+V = np.zeros(1,N+2)
+idx1 = int((L - a / 2) / dx + 2)
+idx2 = int((L + a / 2) / dx)
+
+V[idx1:idx2 + 1] = V_0 # + 1 to include endpoint
 
 
 
 # Coefficients
-a = 0
-b = 0
+r = i * dt / 4 / dx**2
+b = dt / dx**2
+
+# First Matrix
+a = (4 * i + (2 * dt * V[2:N + 1] / dx**2))
+b = -dt / dx**2 * np.ones(1,N)
+c = -dt / dx**2 * np.ones(1,N)
+
+# LU solve
+
+# Second Matrix
+a = -a
+b = -b
+c = -c
